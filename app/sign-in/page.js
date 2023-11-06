@@ -1,11 +1,12 @@
 "use client"
 import { Button, Form, Input, Col, Row, Spin, notification } from "antd"
-import { useState } from "react"
+import { useState , useEffect } from "react"
 import 'bootstrap/dist/css/bootstrap.css';
 import { signIn } from "../apis";
 import { apiCallWithAuth } from "../helpers/apiUtil";
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+
 
 export default function SignIn() {
   const [emailLogin, setEmailLogin] = useState(true);
@@ -18,6 +19,13 @@ export default function SignIn() {
   const [api, contextHolder] = notification.useNotification();
   const [passwordValid, setPasswordValid] = useState(true);
   const router = useRouter()
+
+  useEffect (() => {
+    
+    const token = localStorage.getItem('athenticated');
+
+    if(token) localStorage.removeItem('authenticated');
+  },[])
   
   const changeLoginMethod = () => {
     setEmailLogin(!emailLogin)
@@ -64,6 +72,7 @@ export default function SignIn() {
         description: `Welcome ${Data.first_name} ${Data.last_name}`,
         duration: 1,
       });
+      localStorage.setItem('athenticated' , true);
       router.push(`/quiz-page?user_id=${Data.user_id}`)
     } else if (meta && meta.code && meta.code === 400) {
       api.warning({

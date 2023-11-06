@@ -1,7 +1,7 @@
 "use client"
 
 import { Button, Form, Input, Col, Row, notification } from "antd"
-import { useState } from "react"
+import { useState , useEffect } from "react"
 import 'bootstrap/dist/css/bootstrap.css';
 import { addUser } from "../apis";
 import { apiCallWithAuth } from "../helpers/apiUtil";
@@ -24,7 +24,11 @@ export default function SignUp() {
   const [lName , setLname] = useState("");
   const router = useRouter()
  
+  useEffect (() => {
+    const token = localStorage.getItem('athenticated');
 
+    if(token) localStorage.removeItem('authenticated');
+  })
   const addNewUser = async () => {
     debugger
     if(!email || !mobile || !fName || !lName || !password){
@@ -63,6 +67,7 @@ export default function SignUp() {
         description: `Welcome ${Data.first_name} ${Data.last_name}`,
         duration: 1,
       });
+      localStorage.setItem('athenticated' , true);
       router.push(`/quiz-page?user_id=${Data.user_id}`)
     } else if (meta && meta.code && meta.code === 400) {
       api.warning({

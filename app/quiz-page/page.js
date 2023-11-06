@@ -20,12 +20,19 @@ export default function Quiz() {
     const [loader, setLoader] = useState(false)
     const [attempted , setAttempted] = useState(0);
     const [score , setScore] = useState(0);
+    const [name , setName] = useState("");
     const router = useRouter()
 
     const searchParams = useSearchParams()
 
     useEffect(() => {
+        const token = localStorage.getItem('athenticated');
 
+        if(!token){
+            router.push(`/sign-in`);
+            return;
+        }
+        
         const id = searchParams.get('user_id');
         if(!id) {
             router.push(`/sign-in`);
@@ -41,6 +48,9 @@ export default function Quiz() {
             if (meta && meta.code != 200) {
                 router.push(`/sign-in`);
                 return;
+            }else if(meta && meta.code == 200){
+                const {first_name ,last_name} = Data;
+                setName(first_name + " " + last_name);
             }
         }
 
@@ -123,7 +133,7 @@ export default function Quiz() {
 
     return (
         <>
-            <NavBar score = {score} name = {"sfasd"} />
+            <NavBar score = {score} name = {name} />
             {question && question.length && question.map((obj, index) => {
                 return (
                     <>
